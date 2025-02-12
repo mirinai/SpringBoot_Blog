@@ -1,10 +1,21 @@
 spring:
   jpa:
-    # 전송 쿼리 확인
+    # 실행되는 SQL 쿼리를 콘솔에 출력 (true로 설정하면 모든 쿼리가 로그에 표시됨)
     show-sql: true
+
     properties:
       hibernate:
+        # 출력되는 SQL 쿼리를 보기 좋게 정렬
         format_sql: true
 
-    #테이블 생성 뒤에 data.sql 실행
+    # 테이블이 생성된 후 data.sql을 실행하도록 설정
     defer-datasource-initialization: true
+
+  datasource:
+    # H2 데이터베이스를 인메모리 모드로 사용 (테스트용 데이터베이스)
+    url: jdbc:h2:mem:testdb
+
+  h2:
+    console:
+      # H2 데이터베이스 콘솔을 활성화 (웹 브라우저에서 H2 데이터베이스를 확인 가능)
+      enabled: true
