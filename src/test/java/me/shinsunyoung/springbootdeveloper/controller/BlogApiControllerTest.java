@@ -20,7 +20,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -92,4 +94,37 @@ class BlogApiControllerTest {
         // 저장된 게시글의 내용이 요청한 내용과 같은지 확인
         assertThat(articles.get(0).getContent()).isEqualTo(content);
     }
+
+    /**
+     * 블로그 글 목록 조회 API 테스트
+     * - 저장된 블로그 글이 정상적으로 조회되는지 검증
+     */
+    @DisplayName("findAllArticles: 블로그 글 목록 조회에 성공") // 테스트 설명
+    @Test
+    public void findAllArticles() throws Exception {
+
+        // given (테스트 데이터 준비)
+        final String url = "/api/articles"; // 테스트할 API 엔드포인트
+        final String title = "title"; // 테스트할 게시글 제목
+        final String content = "content"; // 테스트할 게시글 내용
+
+        // 데이터베이스에 테스트용 게시글 저장
+        blogRepository.save(Article.builder()
+                .title(title)
+                .content(content)
+                .build()
+        );
+
+        // when (API 요청 실행)
+        // MockMvc를 사용하여 GET 요청을 보냄
+        final ResultActions resultActions = mockMvc.perform(get(url)
+                .accept(MediaType.APPLICATION_JSON)); // 응답 데이터 타입을 JSON으로 지정
+
+        // then (결과 검증)
+        resultActions
+                .andExpect(status().isOk()) // HTTP 응답 상태 코드가 200 OK인지 검증
+                .andExpect(jsonPath("$[0].content").value(content)) // 응답 JSON의 첫 번째 객체의 content 값 검증
+                .andExpect(jsonPath("$[0].title").value(title)); // 응답 JSON의 첫 번째 객체의 title 값 검증
+    }
+
 }
