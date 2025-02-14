@@ -6,6 +6,8 @@ import me.shinsunyoung.springbootdeveloper.dto.AddArticleRequest;
 import me.shinsunyoung.springbootdeveloper.repository.BlogRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 블로그 서비스 클래스
  * 게시글과 관련된 비즈니스 로직을 처리
@@ -25,4 +27,14 @@ public class BlogService {
     public Article save(AddArticleRequest request) {
         return blogRepository.save(request.toEntity()); // DTO를 엔티티로 변환 후 저장
     }
+
+    /**
+     * 모든 게시글을 조회하는 메서드
+     *
+     * @return 데이터베이스에 저장된 모든 Article 엔티티 목록 (List 형태)
+     */
+    public List<Article> findAll() {
+        return blogRepository.findAll(); // JPA의 기본 제공 메서드를 사용하여 모든 게시글 조회
+    }
+
 }

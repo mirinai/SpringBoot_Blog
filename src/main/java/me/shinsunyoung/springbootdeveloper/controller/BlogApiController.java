@@ -3,12 +3,16 @@ package me.shinsunyoung.springbootdeveloper.controller;
 import lombok.RequiredArgsConstructor;
 import me.shinsunyoung.springbootdeveloper.domain.Article;
 import me.shinsunyoung.springbootdeveloper.dto.AddArticleRequest;
+import me.shinsunyoung.springbootdeveloper.dto.ArticleResponse;
 import me.shinsunyoung.springbootdeveloper.service.BlogService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * 블로그 API 컨트롤러
@@ -19,6 +23,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class BlogApiController {
 
     private final BlogService blogService; // 블로그 서비스 (비즈니스 로직 처리)
+
+
+    /**
+     * 모든 게시글을 조회하는 API 엔드포인트
+     *
+     * @return 저장된 모든 게시글을 ArticleResponse DTO 형태로 반환 (HTTP 200 OK 상태)
+     */
+    @GetMapping("/api/articles")
+    public ResponseEntity<List<ArticleResponse>> findAllArticles() {
+
+        // 서비스 계층에서 모든 게시글을 조회하고, ArticleResponse DTO 리스트로 변환
+        List<ArticleResponse> articles = blogService.findAll()
+                .stream()
+                .map(ArticleResponse::new) // Article 엔티티를 ArticleResponse DTO로 변환
+                .toList(); // 변환된 결과를 리스트로 저장
+
+        // HTTP 200 OK 상태와 함께 게시글 목록 반환
+        return ResponseEntity.ok().body(articles);
+    }
+
+
 
     /**
      * 게시글 추가 요청을 처리하는 API 엔드포인트
