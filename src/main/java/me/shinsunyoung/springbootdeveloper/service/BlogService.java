@@ -37,4 +37,17 @@ public class BlogService {
         return blogRepository.findAll(); // JPA의 기본 제공 메서드를 사용하여 모든 게시글 조회
     }
 
+    /**
+     * 특정 ID를 가진 게시글을 조회하는 메서드
+     *
+     * @param id 조회할 게시글의 ID
+     * @return ID에 해당하는 Article 엔티티 객체
+     * @throws IllegalArgumentException 해당 ID의 게시글이 존재하지 않을 경우 예외 발생
+     */
+    public Article findById(long id) {
+        return blogRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("not found: " + id)); // 존재하지 않으면 예외 발생
+    }
+
+
 }

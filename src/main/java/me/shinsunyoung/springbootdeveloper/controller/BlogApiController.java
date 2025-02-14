@@ -7,10 +7,7 @@ import me.shinsunyoung.springbootdeveloper.dto.ArticleResponse;
 import me.shinsunyoung.springbootdeveloper.service.BlogService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -59,4 +56,21 @@ public class BlogApiController {
         // HTTP 상태 코드 201 (Created)와 함께 저장된 게시글 반환
         return ResponseEntity.status(HttpStatus.CREATED).body(savedArticle);
     }
+
+    /**
+     * 특정 ID를 가진 게시글을 조회하는 API 엔드포인트
+     *
+     * @param id 조회할 게시글의 ID (URL 경로 변수)
+     * @return 조회된 게시글을 ArticleResponse DTO 형태로 반환 (HTTP 200 OK 상태)
+     */
+    @GetMapping("/api/articles/{id}") // 특정 ID의 게시글을 조회하는 GET 요청 엔드포인트
+    public ResponseEntity<ArticleResponse> findArticle(@PathVariable("id") long id) {
+
+        // 서비스 계층에서 ID를 기준으로 게시글 조회
+        Article article = blogService.findById(id);
+
+        // 조회된 게시글을 ArticleResponse DTO로 변환하여 HTTP 200 OK 응답으로 반환
+        return ResponseEntity.ok().body(new ArticleResponse(article));
+    }
+
 }

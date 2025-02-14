@@ -127,4 +127,36 @@ class BlogApiControllerTest {
                 .andExpect(jsonPath("$[0].title").value(title)); // 응답 JSON의 첫 번째 객체의 title 값 검증
     }
 
+
+    /**
+     * 특정 ID를 가진 블로그 게시글 조회 API 테스트
+     * - 저장된 블로그 글이 ID 기반으로 정상적으로 조회되는지 검증
+     */
+    @DisplayName("findArticle: 블로그 조회에 성공") // 테스트 설명
+    @Test
+    public void findArticle() throws Exception {
+
+        // given (테스트 데이터 준비)
+        final String url = "/api/articles/{id}"; // 조회할 API 엔드포인트 (ID를 경로 변수로 사용)
+        final String title = "title"; // 테스트할 게시글 제목
+        final String content = "content"; // 테스트할 게시글 내용
+
+        // 데이터베이스에 테스트용 게시글 저장
+        Article savedArticle = blogRepository.save(Article.builder()
+                .title(title)
+                .content(content)
+                .build()
+        );
+
+        // when (API 요청 실행)
+        // MockMvc를 사용하여 GET 요청을 보냄 (savedArticle의 ID를 경로 변수로 전달)
+        final ResultActions resultActions = mockMvc.perform(get(url, savedArticle.getId()));
+
+        // then (결과 검증)
+        resultActions
+                .andExpect(status().isOk()) // HTTP 응답 상태 코드가 200 OK인지 검증
+                .andExpect(jsonPath("$.content").value(content)) // 응답 JSON의 content 값 검증
+                .andExpect(jsonPath("$.title").value(title)); // 응답 JSON의 title 값 검증
+    }
+
 }
