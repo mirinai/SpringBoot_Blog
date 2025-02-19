@@ -20,8 +20,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -158,5 +157,40 @@ class BlogApiControllerTest {
                 .andExpect(jsonPath("$.content").value(content)) // 응답 JSON의 content 값 검증
                 .andExpect(jsonPath("$.title").value(title)); // 응답 JSON의 title 값 검증
     }
+
+
+    /**
+     * 특정 ID를 가진 블로그 게시글 삭제 API 테스트
+     * - 저장된 게시글을 삭제하고, 삭제 후 데이터베이스에서 존재하지 않는지 검증
+     */
+    @DisplayName("deleteArticle: 블로그 글 지우기") // 테스트 설명
+    @Test
+    public void deleteArticle() throws Exception {
+
+        // given (테스트 데이터 준비)
+        final String url = "/api/articles/{id}"; // 삭제할 API 엔드포인트 (ID를 경로 변수로 사용)
+        final String title = "title"; // 테스트할 게시글 제목
+        final String content = "content"; // 테스트할 게시글 내용
+
+        // 데이터베이스에 테스트용 게시글 저장
+        Article savedArticle = blogRepository.save(Article.builder()
+                .title(title)
+                .content(content)
+                .build()
+        );
+
+        // when (API 요청 실행)
+        // MockMvc를 사용하여 DELETE 요청을 보냄 (savedArticle의 ID를 경로 변수로 전달)
+        mockMvc.perform(delete(url, savedArticle.getId()))
+                .andExpect(status().isOk()); // HTTP 응답 상태 코드가 200 OK인지 검증
+
+        // then (결과 검증)
+        // 데이터베이스에서 모든 게시글 목록 조회
+        List<Article> articles = blogRepository.findAll();
+
+        // 삭제 후 데이터베이스가 비어있는지 확인
+        assertThat(articles).isEmpty();
+    }
+
 
 }
