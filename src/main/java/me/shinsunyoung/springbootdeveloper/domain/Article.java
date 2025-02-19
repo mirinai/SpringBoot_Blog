@@ -37,4 +37,16 @@ public class Article {
         this.title = title;
         this.content = content;
     }
+
+    /**
+     * 게시글 정보를 수정하는 메서드
+     *
+     * @param title   변경할 제목
+     * @param content 변경할 내용
+     */
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
 }

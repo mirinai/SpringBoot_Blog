@@ -3,8 +3,10 @@ package me.shinsunyoung.springbootdeveloper.service;
 import lombok.RequiredArgsConstructor;
 import me.shinsunyoung.springbootdeveloper.domain.Article;
 import me.shinsunyoung.springbootdeveloper.dto.AddArticleRequest;
+import me.shinsunyoung.springbootdeveloper.dto.UpdateArticleRequest;
 import me.shinsunyoung.springbootdeveloper.repository.BlogRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -59,5 +61,26 @@ public class BlogService {
         blogRepository.deleteById(id); // JPA에서 제공하는 기본 메서드를 사용하여 ID 기준으로 삭제
     }
 
+    /**
+     * 특정 ID를 가진 게시글을 수정하는 메서드
+     *
+     * @param id 수정할 게시글의 ID
+     * @param request 게시글 수정 요청 객체 (수정할 제목과 내용 포함)
+     * @return 수정된 Article 엔티티 객체
+     * @throws IllegalArgumentException 게시글이 존재하지 않을 경우 예외 발생
+     */
+    @Transactional // 해당 메서드를 하나의 트랜잭션으로 처리 (변경 감지 기능 활성화)
+    public Article update(long id, UpdateArticleRequest request) {
+
+        // ID를 기준으로 게시글을 조회, 존재하지 않으면 예외 발생
+        Article article = blogRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("not found: " + id));
+
+        // 조회된 엔티티의 제목과 내용을 변경 (JPA 변경 감지 적용)
+        article.update(request.getTitle(), request.getContent());
+
+        // 변경 감지(Dirty Checking)에 의해 트랜잭션 종료 시 자동으로 DB에 반영됨
+        return article;
+    }
 
 }
