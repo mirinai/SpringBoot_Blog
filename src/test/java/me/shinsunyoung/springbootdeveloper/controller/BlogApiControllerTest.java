@@ -3,6 +3,7 @@ package me.shinsunyoung.springbootdeveloper.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.shinsunyoung.springbootdeveloper.domain.Article;
 import me.shinsunyoung.springbootdeveloper.dto.AddArticleRequest;
+import me.shinsunyoung.springbootdeveloper.dto.UpdateArticleRequest;
 import me.shinsunyoung.springbootdeveloper.repository.BlogRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -190,6 +191,52 @@ class BlogApiControllerTest {
 
         // 삭제 후 데이터베이스가 비어있는지 확인
         assertThat(articles).isEmpty();
+    }
+
+    /**
+     * 특정 ID를 가진 블로그 게시글 수정 API 테스트
+     * - 기존 게시글을 수정하고, 수정된 내용이 데이터베이스에 반영되었는지 검증
+     */
+    @DisplayName("updateArticle: 블로그 글 고치기") // 테스트 설명
+    @Test
+    public void updateArticle() throws Exception {
+
+        // given (테스트 데이터 준비)
+        final String url = "/api/articles/{id}"; // 수정할 API 엔드포인트 (ID를 경로 변수로 사용)
+        final String title = "title"; // 기존 게시글 제목
+        final String content = "content"; // 기존 게시글 내용
+
+        // 데이터베이스에 테스트용 게시글 저장
+        Article savedArticle = blogRepository.save(Article.builder()
+                .title(title)
+                .content(content)
+                .build()
+        );
+
+        final String newTitle = "new title"; // 수정할 새로운 제목
+        final String newContent = "new content"; // 수정할 새로운 내용
+
+        // 수정 요청 DTO 생성
+        UpdateArticleRequest request = new UpdateArticleRequest(newTitle, newContent);
+
+        // when (API 요청 실행)
+        // MockMvc를 사용하여 PUT 요청을 보냄 (savedArticle의 ID를 경로 변수로 전달)
+        ResultActions result = mockMvc.perform(put(url, savedArticle.getId())
+                .contentType(MediaType.APPLICATION_JSON_VALUE) // 요청 타입을 JSON으로 지정
+                .content(objectMapper.writeValueAsString(request)) // 요청 본문을 JSON 문자열로 변환하여 포함
+        );
+
+        // then (결과 검증)
+        result.andExpect(status().isOk()); // HTTP 응답 상태 코드가 200 OK인지 검증
+
+        // 수정된 게시글을 데이터베이스에서 조회
+        Article article = blogRepository.findById(savedArticle.getId()).get();
+
+        // 제목이 수정된 내용과 일치하는지 확인
+        assertThat(article.getTitle()).isEqualTo(newTitle);
+
+        // 내용이 수정된 내용과 일치하는지 확인
+        assertThat(article.getContent()).isEqualTo(newContent);
     }
 
 
