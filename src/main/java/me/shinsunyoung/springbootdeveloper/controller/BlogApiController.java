@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import me.shinsunyoung.springbootdeveloper.domain.Article;
 import me.shinsunyoung.springbootdeveloper.dto.AddArticleRequest;
 import me.shinsunyoung.springbootdeveloper.dto.ArticleResponse;
+import me.shinsunyoung.springbootdeveloper.dto.UpdateArticleRequest;
 import me.shinsunyoung.springbootdeveloper.service.BlogService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -88,6 +89,27 @@ public class BlogApiController {
         // HTTP 200 OK 상태 코드만 반환 (응답 본문 없음)
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * 특정 ID를 가진 게시글을 수정하는 API 엔드포인트
+     *
+     * @param id 수정할 게시글의 ID (URL 경로 변수)
+     * @param request 게시글 수정 요청 객체 (수정할 제목과 내용 포함)
+     * @return 수정된 게시글을 포함한 HTTP 200 OK 응답
+     */
+    @PutMapping("/api/articles/{id}") // 특정 ID의 게시글을 수정하는 PUT 요청 엔드포인트
+    public ResponseEntity<Article> updateArticle(@PathVariable("id") long id,
+                                                 @RequestBody UpdateArticleRequest request) {
+
+        // 서비스 계층을 호출하여 게시글 수정
+        Article updatedArticle = blogService.update(id, request);
+
+        // HTTP 200 OK 상태와 함께 수정된 게시글 반환
+        return ResponseEntity.ok()
+                .body(updatedArticle);
+    }
+
+
 
 
 }
