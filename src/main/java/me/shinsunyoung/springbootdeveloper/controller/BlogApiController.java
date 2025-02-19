@@ -73,4 +73,21 @@ public class BlogApiController {
         return ResponseEntity.ok().body(new ArticleResponse(article));
     }
 
+    /**
+     * 특정 ID를 가진 게시글을 삭제하는 API 엔드포인트
+     *
+     * @param id 삭제할 게시글의 ID (URL 경로 변수)
+     * @return HTTP 200 OK 상태 반환 (본문 없음)
+     */
+    @DeleteMapping("/api/articles/{id}") // 특정 ID의 게시글을 삭제하는 DELETE 요청 엔드포인트
+    public ResponseEntity<Void> deleteArticle(@PathVariable("id") long id) {
+
+        // 서비스 계층을 호출하여 ID에 해당하는 게시글 삭제
+        blogService.delete(id);
+
+        // HTTP 200 OK 상태 코드만 반환 (응답 본문 없음)
+        return ResponseEntity.ok().build();
+    }
+
+
 }

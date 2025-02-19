@@ -50,4 +50,14 @@ public class BlogService {
     }
 
 
+    /**
+     * 특정 ID를 가진 게시글을 삭제하는 메서드
+     *
+     * @param id 삭제할 게시글의 ID
+     */
+    public void delete(long id) {
+        blogRepository.deleteById(id); // JPA에서 제공하는 기본 메서드를 사용하여 ID 기준으로 삭제
+    }
+
+
 }
