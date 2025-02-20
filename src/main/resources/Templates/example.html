@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"> <!-- 타임리프 네임스페이스 선언 -->
+<head>
+  <meta charset="UTF-8">
+  <title>타임리프</title>
+</head>
+<body>
+<h1>타임리프 익히기</h1>
+
+<!-- 현재 날짜를 yyyy-MM-dd 형식으로 출력 -->
+<p th:text="${#temporals.format(today, 'yyyy-MM-dd')}"></p>
+
+<!-- person 객체를 사용하여 데이터를 출력 -->
+<div th:object="${person}">
+  <!-- 이름 출력 -->
+  <p th:text="|이름 : *{name}|"></p>
+
+  <!-- 나이 출력 -->
+  <p th:text="|나이 : *{age}"></p>
+
+  <p>취미</p>
+  <!-- 취미 리스트를 반복문으로 출력 -->
+  <ul th:each="hobby : *{hobbies}">
+    <li th:text="${hobby}"></li>
+
+    <!-- 취미가 "exercise"이면 '(대표 취미)'를 출력 -->
+    <span th:if="${hobby == 'exercise'}">(대표 취미)</span>
+  </ul>
+</div>
+
+<!-- person 객체의 id 값을 사용하여 동적인 URL 생성 -->
+<a th:href="@{/api/articles/{id}(id=${person.id})}">글보기</a>
+</body>
+</html>
