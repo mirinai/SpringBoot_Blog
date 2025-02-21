@@ -1,11 +1,14 @@
 package me.shinsunyoung.springbootdeveloper.controller;
 
 import lombok.RequiredArgsConstructor;
+import me.shinsunyoung.springbootdeveloper.domain.Article;
 import me.shinsunyoung.springbootdeveloper.dto.ArticleListViewResponse;
+import me.shinsunyoung.springbootdeveloper.dto.ArticleViewResponse;
 import me.shinsunyoung.springbootdeveloper.service.BlogService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -28,4 +31,16 @@ public class BlogViewController {
 
         return "articleList"; // "articleList"라는 이름의 Thymeleaf 템플릿을 반환
     }
+
+    @GetMapping("/articles/{id}") // "/articles/{id}" 경로로 GET 요청이 들어오면 실행
+    public String getArticle(@PathVariable("id") Long id, Model model) {
+        // 요청된 ID에 해당하는 게시글을 데이터베이스에서 조회
+        Article article = blogService.findById(id);
+
+        // 조회된 게시글을 ArticleViewResponse DTO로 변환하여 모델에 추가
+        model.addAttribute("article", new ArticleViewResponse(article));
+
+        return "article"; // "article"이라는 이름의 Thymeleaf 템플릿을 반환
+    }
+
 }
