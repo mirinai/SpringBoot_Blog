@@ -1,5 +1,9 @@
 // "delete-btn" ID를 가진 요소를 가져옴 (삭제 버튼)
 const deleteButton = document.getElementById('delete-btn');
+// "modify-btn" ID를 가진 요소(수정 버튼)를 가져옴
+const modifyButton = document.getElementById('modify-btn');
+// "create-btn" ID를 가진 요소(생성 버튼)를 가져옴
+const createButton = document.getElementById("create-btn");
 
 // 삭제 버튼이 존재하는 경우에만 이벤트 리스너를 추가
 if (deleteButton) {
@@ -21,8 +25,7 @@ if (deleteButton) {
     });
 }
 
-// "modify-btn" ID를 가진 요소(수정 버튼)를 가져옴
-const modifyButton = document.getElementById('modify-btn');
+
 
 // 수정 버튼이 존재하는 경우에만 이벤트 리스너를 추가
 if (modifyButton) {
@@ -48,6 +51,32 @@ if (modifyButton) {
 
             // 수정 후 해당 게시글 페이지(`/articles/{id}`)로 이동
             location.replace(`/articles/${id}`);
+        });
+    });
+}
+
+// 생성 버튼이 존재하는 경우에만 이벤트 리스너를 추가
+if(createButton){
+    createButton.addEventListener("click",(event) =>{
+
+        // REST API POST 요청을 사용하여 새로운 게시글을 생성
+        fetch("/api/articles", {
+            method: "POST", // HTTP POST 메서드를 사용하여 요청 전송 (새로운 데이터 추가)
+            headers: {
+                "Content-Type": "application/json", // 요청 본문의 데이터 타입을 JSON으로 설정
+            },
+            body: JSON.stringify({ // JSON 형식으로 데이터 변환
+                title:document.getElementById("title").value, // 입력된 제목 값
+                content: document.getElementById("content").value, // 입력된 내용 값
+            }),
+        })
+        .then(() =>{
+
+            // 생성 완료 후 알림창을 띄움
+            alert("등록 되었습니다.");
+
+            // 생성 후 게시글 목록 페이지("/articles")로 이동
+            location.replace("/articles");
         });
     });
 }
