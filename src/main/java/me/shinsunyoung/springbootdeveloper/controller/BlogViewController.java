@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -42,5 +43,23 @@ public class BlogViewController {
 
         return "article"; // "article"이라는 이름의 Thymeleaf 템플릿을 반환
     }
+
+    @GetMapping("/new-article") // "/new-article" 경로로 GET 요청이 들어오면 실행
+    public String newArticle(@RequestParam(required = false) Long id, Model model) {
+
+        // ID가 전달되지 않은 경우 (새로운 게시글 작성)
+        if (id == null) {
+            model.addAttribute("article", new ArticleViewResponse()); // 빈 DTO 객체 추가
+        }
+        // ID가 전달된 경우 (기존 게시글 수정)
+        else {
+            Article article = blogService.findById(id); // ID를 이용해 기존 게시글 조회
+            model.addAttribute("article", new ArticleViewResponse(article)); // 조회된 데이터를 DTO로 변환하여 모델에 추가
+        }
+
+        return "newArticle"; // "newArticle"이라는 이름의 Thymeleaf 템플릿을 반환
+    }
+
+
 
 }
